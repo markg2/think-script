@@ -10,15 +10,16 @@ plot isPositiveSlope = slope > 0;
 ################################################################################
 # Volume Spikes
 
+
 # SMA
 input volume_spike_period = 20;
-input volume_spike_threshold = 1.5;
+input volume_spike_threshold = 1.1;
 def volume_ma = ExpAverage(volume, volume_spike_period);
 def isSpikeSMA = if volume > volume_ma * volume_spike_threshold then 1 else 0;
 
 # STD
 input stdev_period = 20;
-input stdev_multiplier = 2;
+input stdev_multiplier = 1.1;
 def volume_stdev = StDev(volume, stdev_period);
 def volume_avg = average(volume, stdev_period);
 def isSpikeSTD = if AbsValue(volume - volume_avg) > volume_stdev * stdev_multiplier then 1 else 0;
@@ -27,9 +28,10 @@ def isSpikeSTD = if AbsValue(volume - volume_avg) > volume_stdev * stdev_multipl
 input rate_of_change_period = 10;
 def prev_volume = volume[rate_of_change_period];
 def roc_volume = (volume - prev_volume) / (prev_volume * 100);
-def isSpikeROC = if AbsValue(roc_volume) > 20 then 1 else 0;
+def isSpikeROC = if AbsValue(roc_volume) > 5 then 1 else 0;
 
 #plot result = 1;
+plot result = isSpikeSMA > 0 OR isSpikeSTD > 0 OR isSpikeROC > 0;
 #plot result = isSpikeSMA > 0;
-plot result = isSpikeSTD > 0;
+#plot result = isSpikeSTD > 0;
 #plot result = isSpikeROC > 0;
